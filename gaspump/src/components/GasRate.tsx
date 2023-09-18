@@ -1,23 +1,24 @@
-import { useState } from "react";
+import { memo } from "react";
+
 type RateProps = {
   value: number;
+  rate: number;
   rateDescription: string;
+  onChange: () => void;
 };
-export function GasRate(props: RateProps) {
-  const [gasRate, setGasRate] = useState(1.25);
-  const onGasSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setGasRate(Number(event.target.value));
-  };
+export const GasRate = memo((props: RateProps) => {
+  console.log("Gas Rate Re-Rendered.");
   return (
     <>
       <input
         type="radio"
         name="gasRate"
         value={props.value}
-        checked={gasRate === props.value}
-        onChange={onGasSelection}
+        checked={props.rate === props.value}
+        onChange={props.onChange}
       />
       {props.rateDescription}
     </>
   );
-}
+});
+GasRate.displayName = "GasRate";

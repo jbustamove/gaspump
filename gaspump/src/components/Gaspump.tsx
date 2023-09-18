@@ -1,73 +1,46 @@
 import { useReducer } from "react";
 import { GasRate } from "./GasRate";
-
-type GasPumpState = {
-  gasRate: number;
-  price: number;
-  litres: number;
-};
-
-type GasPumpAction =
-  | {
-      type: "switchGas";
-      rate: number;
-    }
-  | {
-      type: "pump";
-    };
-
-function reducer(state: GasPumpState, action: GasPumpAction): GasPumpState {
-  switch (action.type) {
-    case "switchGas":
-      return { ...state, gasRate: action.rate };
-    case "pump":
-      return {
-        ...state,
-        price: state.gasRate * (state.litres + 0.5),
-        litres: state.litres + 0.5,
-      };
-    default:
-      return state;
-  }
-}
+import { gaspumpActionsReducer } from "../actions/GaspumpActions";
+import { GasPumpButton } from "./GasPumpButton";
 
 export function GasPump() {
-  const [{ gasRate, price, litres }, dispatch] = useReducer(reducer, {
-    gasRate: 1.25,
-    price: 0,
-    litres: 0,
-  });
+  const [{ gasRate, price, litres }, dispatch] = useReducer(
+    gaspumpActionsReducer,
+    {
+      gasRate: 1.25,
+      price: 0,
+      litres: 0,
+    }
+  );
 
   return (
     <>
       <div>
         <p>Litres: {litres.toFixed(2)}</p>
         <p>Total ${price.toFixed(2)}</p>
-        <input
-          type="radio"
-          name="gasRate"
+        <GasRate
           value={gasRate}
-          checked={gasRate === 1.25}
+          rate={1.25}
           onChange={() => dispatch({ type: "switchGas", rate: 1.25 })}
+          rateDescription="Regular - $1.25/L"
         />
-        Regular - $1.25/L
-        <input
-          type="radio"
-          name="gasRate"
+        <GasRate
           value={gasRate}
-          checked={gasRate === 1.5}
+          rate={1.5}
           onChange={() => dispatch({ type: "switchGas", rate: 1.5 })}
+          rateDescription="Silver - $1.50/L"
         />
-        Silver - $1.50/L
-        <input
-          type="radio"
-          name="gasRate"
+        <GasRate
           value={gasRate}
-          checked={gasRate === 1.75}
+          rate={1.75}
           onChange={() => dispatch({ type: "switchGas", rate: 1.75 })}
+          rateDescription="Premium - $1.75/L"
         />
-        Premium - $1.75/L
-        <button onClick={() => dispatch({ type: "pump" })}>Pump</button>
+        <GasPumpButton onClick={() => dispatch({ type: "pump" })} text="Pump" />
+        <GasPumpButton
+          onClick={() => dispatch({ type: "reset" })}
+          text="Reset"
+        />
       </div>
     </>
   );
